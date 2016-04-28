@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A48A0AAD1CD1FFF20045A7E6 /* SocketSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48A0AAC1CD1FFF20045A7E6 /* SocketSingleton.swift */; };
+		A48A0AAF1CD2044F0045A7E6 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48A0AAE1CD2044F0045A7E6 /* InitialViewController.swift */; };
+		A48A0AB11CD2045B0045A7E6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48A0AB01CD2045B0045A7E6 /* MainViewController.swift */; };
+		A48A0AB31CD20DE00045A7E6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48A0AB21CD20DE00045A7E6 /* SettingsViewController.swift */; };
 		A4B820C21CBF9677005B2DCB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B820C11CBF9677005B2DCB /* AppDelegate.swift */; };
-		A4B820C41CBF9677005B2DCB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B820C31CBF9677005B2DCB /* ViewController.swift */; };
 		A4B820C71CBF9677005B2DCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4B820C51CBF9677005B2DCB /* Main.storyboard */; };
 		A4B820C91CBF9677005B2DCB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4B820C81CBF9677005B2DCB /* Assets.xcassets */; };
 		A4B820CC1CBF9677005B2DCB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4B820CA1CBF9677005B2DCB /* LaunchScreen.storyboard */; };
@@ -20,9 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A48A0AAC1CD1FFF20045A7E6 /* SocketSingleton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketSingleton.swift; sourceTree = "<group>"; };
+		A48A0AAE1CD2044F0045A7E6 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
+		A48A0AB01CD2045B0045A7E6 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		A48A0AB21CD20DE00045A7E6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		A4B820BE1CBF9677005B2DCB /* Arm Control.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Arm Control.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B820C11CBF9677005B2DCB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A4B820C31CBF9677005B2DCB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A4B820C61CBF9677005B2DCB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A4B820C81CBF9677005B2DCB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A4B820CB1CBF9677005B2DCB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -63,7 +69,10 @@
 		A41CF95D1CC6BB4F00EE2172 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				A4B820C31CBF9677005B2DCB /* ViewController.swift */,
+				A48A0AAC1CD1FFF20045A7E6 /* SocketSingleton.swift */,
+				A48A0AAE1CD2044F0045A7E6 /* InitialViewController.swift */,
+				A48A0AB01CD2045B0045A7E6 /* MainViewController.swift */,
+				A48A0AB21CD20DE00045A7E6 /* SettingsViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -191,12 +200,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4B820D91CBF9682005B2DCB /* ysocket.swift in Sources */,
-				A4B820C41CBF9677005B2DCB /* ViewController.swift in Sources */,
 				A4B820DC1CBF9682005B2DCB /* yudpsocket.c in Sources */,
+				A48A0AAF1CD2044F0045A7E6 /* InitialViewController.swift in Sources */,
+				A48A0AB31CD20DE00045A7E6 /* SettingsViewController.swift in Sources */,
 				A4B820DA1CBF9682005B2DCB /* ytcpsocket.c in Sources */,
+				A48A0AAD1CD1FFF20045A7E6 /* SocketSingleton.swift in Sources */,
 				A4B820C21CBF9677005B2DCB /* AppDelegate.swift in Sources */,
 				A4B820DB1CBF9682005B2DCB /* ytcpsocket.swift in Sources */,
 				A4B820DD1CBF9682005B2DCB /* yudpsocket.swift in Sources */,
+				A48A0AB11CD2045B0045A7E6 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
