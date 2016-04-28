@@ -24,13 +24,13 @@ class ViewController: UIViewController {
     let iPhone_Y_Max = 414.0
     let iPhone_X_Max = 736.0
     let granularityFactor = 1.0
-    let xRange = [-10.0,10.0]
-    let yRange = [10.0,25.0]
+    let xRange = [-20.0,20.0]
+    let yRange = [35.0,50.0]
     
     var addr: String =  "edison.local"
     var port: Int = 21224
     var client: UDPClient?
-    var coordinatesArray: [Double] = [0.0,20.0,0.0]
+    var coordinatesArray: [Double] = [0.0,35.0,0.0]
     
     var referenceYaw: Double = 0.0
     var currentYaw: Double = 0.0
@@ -80,7 +80,7 @@ class ViewController: UIViewController {
     var currentDegrees: Double = 0.0
     var keyLocationValues = Dictionary<Int, Array<Double>>()
     
-    var boardDistance: Double = 20.0
+    var boardDistance: Double = 40.0
     
     //
     // IBOutlets
@@ -240,7 +240,7 @@ class ViewController: UIViewController {
         let x = Double(touch.x)
         let y = Double(touch.y)
         let x2 = map(x, x1: 0, x2: iPhone_X_Max, y1: 0, y2: 40)
-        let y2 = map(y, x1: iPhone_Y_Max, x2: 0, y1: 10, y2: 25)
+        let y2 = map(y, x1: iPhone_Y_Max, x2: 0, y1: 35, y2: 50)
         
         if currentMode == Mode.Train {
             coordinatesArray[0] = x2-20
@@ -253,7 +253,7 @@ class ViewController: UIViewController {
         let x = Double(touch.x)
         let y = Double(touch.y)
         let x2 = map(x, x1: 0, x2: iPhone_X_Max, y1: 0, y2: 40)
-        let y2 = map(y, x1: iPhone_Y_Max, x2: 0, y1: 10, y2: 25)
+        let y2 = map(y, x1: iPhone_Y_Max, x2: 0, y1: 35, y2: 50)
     
         if currentMode == Mode.Train {
             coordinatesArray[0] = x2-20
