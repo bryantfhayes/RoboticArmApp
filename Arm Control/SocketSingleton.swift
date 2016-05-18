@@ -19,21 +19,65 @@ class SocketSingleton {
     //
     var addr: String =  "edison.local"
     var port: Int = 21224
-    var client: UDPClient?
+    var sender: UDPClient?
+    var receiver: UDPServer?
+    let recvLen: Int = 255
     
     //
     // Functions
     //
     private init() {
-        self.client = UDPClient(addr: self.addr, port: self.port)
+        self.sender = UDPClient(addr: self.addr, port: self.port)
+        self.receiver = UDPServer(addr: "", port: 21224)
     }
     
-    func sendXYZ(coordinates: [Int]) {
-        self.sendPacket("xyz:\(coordinates[0]),\(coordinates[1]),\(coordinates[2])\0\n")
+    func ping() -> Bool {
+        self.sendPacket("hello")
+        let (data, _, _) = (self.receiver?.recv(recvLen))!
+        if data == "ok" {
+            return true;
+        } else {
+            return false
+        }
+    }
+    
+    func setCommand(str: String) -> Bool {
+        self.sendPacket(str)
+        let (data, _, _) = (self.receiver?.recv(recvLen))!
+        if data == "ok" {
+            return true;
+        } else {
+            return false
+        }
+    }
+    
+    func getCommand(str: String) -> (Bool, String) {
+        self.sendPacket(str)
+        let (data, _, _) = (self.receiver?.recv(recvLen))!
+        if data == "" {
+            return (false, "Timeout error")
+        } else {
+            return (true, data)
+        }
+    }
+    
+    func flushBuffer() {
+        let (_, _, _) = (self.receiver?.recv(recvLen))!
+        return
+    }
+    
+    func readPacket() -> (Bool, String) {
+        let (data, _, _) = (self.receiver?.recv(recvLen))!
+        if data == "" {
+            return (false, "timeout")
+        } else {
+            return (true, data)
+        }
+
     }
     
     func sendPacket(message: String){
-        self.client?.send(str: message)
+        self.sender?.send(str: message)
         print("Sent message: \(message)")
     }
 }

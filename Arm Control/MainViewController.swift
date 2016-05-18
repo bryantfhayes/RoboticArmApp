@@ -12,54 +12,110 @@ class MainViewController: UIViewController {
     
     // MARK: - Variables
     var coordinates: [Int] = [0,35,-15]
+    var armCalibrated: Bool = false
+    var camCalibrated: Bool = false
     let upValue = -15
     let downValue = -23
+    let alert = UIAlertController(title: "Error!", message:"Message not acknowledged!", preferredStyle: .Alert)
+    let okAction = UIAlertAction(title: "OK", style: .Default) { _ in }
     
     // MARK: - IBOutlets
-    @IBOutlet weak var xPositionSlider: UISlider!
-    @IBOutlet weak var yPositionSlider: UISlider!
-    @IBOutlet weak var xPositionLabel: UILabel!
-    @IBOutlet weak var yPositionLabel: UILabel!
+
+    @IBOutlet weak var standbyButton: UIButton!
+    @IBOutlet weak var calibrateArmButton: UIButton!
+    @IBOutlet weak var calibrateCamButton: UIButton!
+    @IBOutlet weak var readyButton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var customCommandButton: UIButton!
     
     // MARK: - IBActions
-    @IBAction func settingsButtonPressed(sender: AnyObject) {
-        performSegueWithIdentifier("toSettingsViewControllerSegue", sender: nil)
+
+    @IBAction func customCommandButtonPressed(sender: AnyObject) {
+        SocketSingleton.sharedInstance.flushBuffer()
+        performSegueWithIdentifier("toCustomCommandViewControllerSegue", sender: nil)
     }
     
-    @IBAction func xSliderChanged(sender: UISlider) {
-        xPositionLabel.text = "X = \(Int(sender.value))"
+    @IBAction func standbyButtonPressed(sender: AnyObject) {
+        let status = SocketSingleton.sharedInstance.setCommand("idle")
+        if !status {
+            self.presentViewController(self.alert, animated: true){}
+        }
     }
     
-    @IBAction func xSliderDone(sender: UISlider) {
-        coordinates[0] = Int(sender.value)
-        SocketSingleton.sharedInstance.sendXYZ(coordinates)
+    @IBAction func calibrateArmButtonPressed(sender: AnyObject) {
+        let status = SocketSingleton.sharedInstance.setCommand("calibrate_arm")
+        if !status {
+            self.presentViewController(self.alert, animated: true){}
+        } else {
+            armCalibrated = true
+            calibrateArmButton.setImage(UIImage(named: "CalibrateArmButtonGreen"), forState: .Normal)
+        }
     }
     
-    @IBAction func ySliderChanged(sender: UISlider) {
-        yPositionLabel.text = "Y = \(Int(sender.value))"
+    @IBAction func calibrateCameraButtonPressed(sender: AnyObject) {
+        let status = SocketSingleton.sharedInstance.setCommand("calibrate_cam")
+        if !status {
+            self.presentViewController(self.alert, animated: true){}
+        } else {
+            while true {
+                let (status, msg) = SocketSingleton.sharedInstance.readPacket()
+                if status {
+                    if msg == "error" {
+                        camCalibrated = false
+                        calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonRed"), forState: .Normal)
+                    } else {
+                        camCalibrated = true
+                        calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonGreen"), forState: .Normal)
+                    }
+                    break
+                }
+                
+            }
+            
+            
+        }
     }
     
-    @IBAction func ySliderDone(sender: UISlider) {
-        coordinates[1] = Int(sender.value)
-        SocketSingleton.sharedInstance.sendXYZ(coordinates)
+    @IBAction func readyButtonPressed(sender: AnyObject) {
+        performSegueWithIdentifier("toLiveViewControllerSegue", sender: nil)
     }
     
-    @IBAction func upButtonPressed(sender: AnyObject) {
-        coordinates[2] = upValue
-        SocketSingleton.sharedInstance.sendXYZ(coordinates)
-    }
-    
-    @IBAction func downButtonPressed(sender: AnyObject) {
-        coordinates[2] = downValue
-        SocketSingleton.sharedInstance.sendXYZ(coordinates)
-    }
-    
-    @IBAction func unwindFromSettings(unwindSegue: UIStoryboardSegue) {
+    @IBAction func unwindToMain(unwindSegue: UIStoryboardSegue) {
 
     }
     
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+        _ = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MainViewController.updateUI), userInfo: nil, repeats: true)
+        alert.addAction(okAction)
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
+    func updateUI() {
+        if armCalibrated {
+            calibrateCamButton.enabled = true
+        } else {
+            calibrateCamButton.enabled = false
+        }
+        if camCalibrated && armCalibrated {
+            readyButton.enabled = true
+            readyButton.setImage(UIImage(named: "ReadyButtonGreen"), forState: .Normal)
+        } else {
+            readyButton.enabled = false
+            readyButton.setImage(UIImage(named: "ReadyButtonWhite"), forState: .Normal)
+        }
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
     }
 }

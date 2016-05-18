@@ -13,19 +13,37 @@ class InitialViewController: UIViewController {
     // MARK: - Variables
     
     // MARK: - IBOutlets
+    @IBOutlet weak var errorLbl: UILabel!
     
     // MARK: - IBActions
-    @IBAction func onButtonPressed(sender: AnyObject) {
-        SocketSingleton.sharedInstance.sendPacket("on:\0\n")
-        performSegueWithIdentifier("toMainViewControllerSegue", sender: nil)
+    @IBAction func onStartButtonPressed(sender: AnyObject) {
+        let success = SocketSingleton.sharedInstance.ping()
+        if success {
+            performSegueWithIdentifier("toMainViewControllerSegue", sender: nil)
+        } else {
+            errorLbl.hidden = false
+            NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: #selector(InitialViewController.hideErrorLbl), userInfo: nil, repeats: false)
+        }
     }
     
     @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
-        SocketSingleton.sharedInstance.sendPacket("off:\0\n")
+        //SocketSingleton.sharedInstance.sendPacket("off:\0\n")
     }
     
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        errorLbl.hidden = true;
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
+    func hideErrorLbl() {
+        errorLbl.hidden = true
     }
 }
