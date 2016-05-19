@@ -18,6 +18,8 @@ class MainViewController: UIViewController {
     let downValue = -23
     let alert = UIAlertController(title: "Error!", message:"Message not acknowledged!", preferredStyle: .Alert)
     let okAction = UIAlertAction(title: "OK", style: .Default) { _ in }
+    var isLoading = false
+    var boardAngle: Double?
     
     // MARK: - IBOutlets
 
@@ -27,11 +29,14 @@ class MainViewController: UIViewController {
     @IBOutlet weak var readyButton: UIButton!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var customCommandButton: UIButton!
+    @IBOutlet weak var bgOverlayImg: UIImageView!
+    @IBOutlet weak var activityMonitor: UIActivityIndicatorView!
+    @IBOutlet weak var calibratingLbl: UILabel!
     
     // MARK: - IBActions
 
     @IBAction func customCommandButtonPressed(sender: AnyObject) {
-        SocketSingleton.sharedInstance.flushBuffer()
+        //SocketSingleton.sharedInstance.flushBuffer()
         performSegueWithIdentifier("toCustomCommandViewControllerSegue", sender: nil)
     }
     
@@ -57,19 +62,26 @@ class MainViewController: UIViewController {
         if !status {
             self.presentViewController(self.alert, animated: true){}
         } else {
-            while true {
-                let (status, msg) = SocketSingleton.sharedInstance.readPacket()
-                if status {
-                    if msg == "error" {
-                        camCalibrated = false
-                        calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonRed"), forState: .Normal)
-                    } else {
-                        camCalibrated = true
-                        calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonGreen"), forState: .Normal)
+            startLoading()
+            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+            dispatch_async(queue) {
+                while true {
+                    let (status, msg) = SocketSingleton.sharedInstance.readPacket()
+                    if status {
+                        if msg == "error" {
+                            self.camCalibrated = false
+                            self.calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonRed"), forState: .Normal)
+                        } else {
+                            self.boardAngle = Double(msg)
+                            self.camCalibrated = true
+                            self.calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonGreen"), forState: .Normal)
+                        }
+                        self.stopLoading()
+                        break
                     }
-                    break
+                    
                 }
-                
+
             }
             
             
@@ -96,18 +108,48 @@ class MainViewController: UIViewController {
     }
     
     func updateUI() {
-        if armCalibrated {
+        if armCalibrated && !isLoading {
             calibrateCamButton.enabled = true
         } else {
             calibrateCamButton.enabled = false
         }
-        if camCalibrated && armCalibrated {
+        if camCalibrated && armCalibrated && !isLoading{
             readyButton.enabled = true
             readyButton.setImage(UIImage(named: "ReadyButtonGreen"), forState: .Normal)
         } else {
             readyButton.enabled = false
             readyButton.setImage(UIImage(named: "ReadyButtonWhite"), forState: .Normal)
         }
+    }
+    
+    func startLoading() {
+        isLoading = true
+        calibratingLbl.hidden = false
+        bgOverlayImg.hidden = false
+        activityMonitor.hidden = false
+        standbyButton.enabled = false
+        calibrateArmButton.enabled = false
+        calibrateCamButton.enabled = false
+        readyButton.enabled = false
+        customCommandButton.enabled = false
+        backButton.enabled = false
+        activityMonitor.startAnimating()
+    }
+    
+    func stopLoading() {
+        calibratingLbl.hidden = true
+        bgOverlayImg.hidden = true
+        activityMonitor.hidden = true
+        standbyButton.enabled = true
+        calibrateArmButton.enabled = true
+        calibrateCamButton.enabled = true
+        readyButton.enabled = true
+        customCommandButton.enabled = true
+        backButton.enabled = true
+        self.bgOverlayImg.hidden = true
+        self.activityMonitor.hidden = true
+        self.activityMonitor.stopAnimating()
+        isLoading = false
     }
     
     func delay(delay:Double, closure:()->()) {
@@ -117,5 +159,12 @@ class MainViewController: UIViewController {
                 Int64(delay * Double(NSEC_PER_SEC))
             ),
             dispatch_get_main_queue(), closure)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "toLiveViewControllerSegue" {
+            let destinationVC = segue.destinationViewController as! LiveViewController
+            destinationVC.boardAngle = self.boardAngle
+        }
     }
 }

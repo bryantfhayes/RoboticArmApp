@@ -128,6 +128,7 @@ public class UDPServer:YSocket{
             let rs=buff[0...Int(readLen-1)]
             let data:[UInt8] = Array(rs)
             let str = String(bytes: data, encoding: NSUTF8StringEncoding)!
+            print("received: \(str)")
             return (str,addr,port)
         }
         return ("","no ip",0)

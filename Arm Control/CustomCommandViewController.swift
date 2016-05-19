@@ -11,8 +11,6 @@ import UIKit
 class CustomCommandViewController: UIViewController {
 
     // MARK: - Variables
-    let alert = UIAlertController(title: "Error!", message:"Message not acknowledged!", preferredStyle: .Alert)
-    let okAction = UIAlertAction(title: "OK", style: .Default) { _ in }
     
     // MARK: - IBOutlets
     @IBOutlet weak var commandEntrybox: UITextField!
@@ -22,7 +20,11 @@ class CustomCommandViewController: UIViewController {
         if let msg = commandEntrybox.text {
             let status = SocketSingleton.sharedInstance.setCommand(msg)
             if !status {
-                self.presentViewController(self.alert, animated: true){}
+                let alert = UIAlertController(title: "Error!", message:"Message not acknowledged!", preferredStyle: .Alert)
+                let okAction = UIAlertAction(title: "OK", style: .Default) { _ in }
+                alert.addAction(okAction)
+                
+                self.presentViewController(alert, animated: true){}
             }
         }
         
@@ -30,7 +32,8 @@ class CustomCommandViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        alert.addAction(okAction)
+        
+        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CustomCommandViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }

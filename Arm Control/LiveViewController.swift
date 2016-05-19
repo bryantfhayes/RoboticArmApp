@@ -11,6 +11,7 @@ import UIKit
 class LiveViewController: UIViewController {
 
     // MARK: - Variables
+    var boardAngle: Double?
     
     // MARK: - IBOutlets
     @IBOutlet weak var boardImg: UIImageView!
@@ -26,6 +27,16 @@ class LiveViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        if let angle = boardAngle{
+            boardAngleLbl.text = String(format: "Board Angle: %.2lfº", angle)
+            boardImg.transform = CGAffineTransformMakeRotation((-CGFloat(angle) * CGFloat(M_PI)) / 180.0)
+        } else {
+            boardAngleLbl.text = "Board Angle: Unknown"
+        }
+        
     }
     
     override func prefersStatusBarHidden() -> Bool {
