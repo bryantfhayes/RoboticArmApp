@@ -19,6 +19,7 @@ class MainViewController: UIViewController {
     let alert = UIAlertController(title: "Error!", message:"Message not acknowledged!", preferredStyle: .Alert)
     let okAction = UIAlertAction(title: "OK", style: .Default) { _ in }
     var isLoading = false
+    var startedLoading = false
     var boardAngle: Double?
     
     // MARK: - IBOutlets
@@ -62,7 +63,7 @@ class MainViewController: UIViewController {
         if !status {
             self.presentViewController(self.alert, animated: true){}
         } else {
-            startLoading()
+            self.isLoading = true
             let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
             dispatch_async(queue) {
                 while true {
@@ -76,7 +77,7 @@ class MainViewController: UIViewController {
                             self.camCalibrated = true
                             self.calibrateCamButton.setImage(UIImage(named: "CalibrateCameraButtonGreen"), forState: .Normal)
                         }
-                        self.stopLoading()
+                        self.isLoading = false
                         break
                     }
                     
@@ -103,11 +104,25 @@ class MainViewController: UIViewController {
         alert.addAction(okAction)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        print("Clearing buffer!")
+        SocketSingleton.sharedInstance.flushBuffer()
+    }
+    
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
     
     func updateUI() {
+        if isLoading && !startedLoading {
+            startedLoading = true
+            startLoading()
+        } else if !isLoading && startedLoading {
+            startedLoading = false
+            stopLoading()
+        }
+        
         if armCalibrated && !isLoading {
             calibrateCamButton.enabled = true
         } else {

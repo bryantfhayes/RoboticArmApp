@@ -34,7 +34,7 @@ class SocketSingleton {
     func ping() -> Bool {
         self.sendPacket("hello")
         let (data, _, _) = (self.receiver?.recv(recvLen))!
-        if data == "ok" {
+        if data == "hello,ok" {
             return true;
         } else {
             return false
@@ -44,7 +44,7 @@ class SocketSingleton {
     func setCommand(str: String) -> Bool {
         self.sendPacket(str)
         let (data, _, _) = (self.receiver?.recv(recvLen))!
-        if data == "ok" {
+        if data == "\(str.componentsSeparatedByString(",")[0]),ok" {
             return true;
         } else {
             return false
